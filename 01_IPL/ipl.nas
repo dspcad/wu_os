@@ -24,10 +24,14 @@
 
 entry:
 	MOV	AX, 0
-	MOV	SS, AX
 	MOV	SP, 0x7c00
-	MOV	DS, AX
-	MOV	ES, AX
+
+;Use AX to initilaize SS, DS, and ES with 0
+;Removing three lines below would not affect the result
+
+;	MOV	SS, AX 
+;	MOV	DS, AX
+;	MOV	ES, AX
 
 	MOV	SI, msg
 
@@ -48,11 +52,11 @@ fin:
 
 msg:
 	DB	0x0a, 0x0a
-	DB	"hello mother fucker!"
+	DB	"Hello Hsiang-Huang Wu!"
 	DB	0x0a, 0
 
+;$ is used to refer to the current address and $$ is used to refer to the address of the start of current section in assembly.
 	RESB    0x1fe-($-$$)
-
 
 	DB	0x55, 0xaa
 
