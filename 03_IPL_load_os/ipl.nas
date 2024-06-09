@@ -34,18 +34,19 @@ entry:
 	MOV	DS, AX
 	MOV	ES, AX
 
+;initial value of floppy reading 
 	MOV	AX, 0x0820
 	MOV	ES, AX
 
-;initial value of floppy reading 
-
-	MOV	AH, 0x02
-	MOV	AL, 1		; Number of sectors to be read 
 	MOV	CH, 0		; track 0
 	MOV	CL, 2		; sector 2
-	MOV	DX, 0		; head 0
+	MOV	DX, 0
+	MOV	BX, 0
 
 readloop:
+	MOV	AH, 0x02
+	MOV	AL, 1		; Number of sectors to be read 
+
 	INT	0x13		;Reads one or more disk sectors into a buffer. 
 
 next:
@@ -67,6 +68,7 @@ next:
 	CMP	CH, CYLS
 	JB 	readloop	;if CH<CYLS, jump to readloop
 
+	MOV	[0x0ff0],CH	;will be used in 04_IPL_32_bits
 	JMP	0xc200
 
 	RESB	0x1fe-($-$$)

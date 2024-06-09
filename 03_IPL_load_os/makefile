@@ -11,7 +11,7 @@ sys:	os_dev.nas
 install: os_dev.sys floppy.img
 	dd if=os_dev.sys of=floppy.img seek=33 bs=512 conv=notrunc
 
-run: floppy.img
+run:
 	make ipl
 	make sys
 	make install
