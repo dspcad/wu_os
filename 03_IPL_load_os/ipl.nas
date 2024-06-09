@@ -53,10 +53,19 @@ next:
 	ADD	AX, 0x0020
 	MOV	ES, AX
 
-	ADD	CL,1
-	CMP	CL,18
-	JBE	readloop
+	ADD	CL, 1
+	CMP	CL, 18
+	JBE	readloop	;if CL<=18, jump to readloop
 
+	MOV	CL, 1
+	ADD	DH, 1		
+	CMP	DH, 2
+	JB 	readloop	;if DH<2, jump to readloop
+
+	MOV	DH, 0
+	ADD	CH, 1
+	CMP	CH, CYLS
+	JB 	readloop	;if CH<CYLS, jump to readloop
 
 	JMP	0xc200
 
