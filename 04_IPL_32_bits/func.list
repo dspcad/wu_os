@@ -1,0 +1,9 @@
+     1                                    ; [FORMAT "WCOFF"]
+     2                                    [BITS 32]
+     3                                  
+     4                                    GLOBAL io_hlt      ; 程序中包含函数名
+     5                                  
+     6                                    [SECTION .text]
+     7                                  io_hlt:              ; void io_hlt(void);
+     8 00000000 F4                        HLT
+     9 00000001 C3                        RET
