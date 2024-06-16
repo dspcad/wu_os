@@ -1,4 +1,4 @@
-; haribote-os
+;hhwu-os
 
 BOTPAK  EQU   0x00280000  ; 加载bootpack
 DSKCAC  EQU   0x00100000  ; 磁盘缓存的位置

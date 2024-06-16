@@ -34,7 +34,7 @@ clean:
 	rm -rf *.bin
 	rm -rf *.sys
 	rm -rf *.obj
-	rm -rf *.lst
+	rm -rf *.list
 	rm -rf $(IMG)
 
 qemu: clean all
