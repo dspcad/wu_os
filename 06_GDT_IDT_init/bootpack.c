@@ -22,7 +22,22 @@ void io_out8(int port, int data);
 int  io_load_eflags(void);
 void io_store_eflags(int eflags);
 
+
+//CYLS    EQU   0x0ff0  
+//LEDS    EQU   0x0ff1
+//VMODE   EQU   0x0ff2 
+//SCRNX   EQU   0x0ff4      
+//SCRNY   EQU   0x0ff6      
+//VRAM    EQU   0x0ff8      
+struct BOOTINFO{
+    char  cyls, leds, vmode, reserve;
+    short scrnx, scrny;
+    char *vram;
+};
+
+
 void init_palette(void);
+void init_screen(struct BOOTINFO *binfo);
 void set_palette(int start, int end, unsigned char *rgb);
 void boxfill8(char *vram, int xsize, unsigned char color, int x0, int y0, int x1, int y1);
 
@@ -47,25 +62,56 @@ static unsigned char table_rgb[16*3]={
                                       0x84, 0x84, 0x84         //15: dark grey
 };
 
+/*
+       A
 
-//CYLS    EQU   0x0ff0  
-//LEDS    EQU   0x0ff1
-//VMODE   EQU   0x0ff2 
-//SCRNX   EQU   0x0ff4      
-//SCRNY   EQU   0x0ff6      
-//VRAM    EQU   0x0ff8      
-struct BOOTINFO{
-    char  cyls, leds, vmode, reserve;
-    short scrnx, scrny;
-    char *vram;
-};
+0 0 0 0 0 0 0 0       0x00
+0 0 0 1 1 0 0 0       0x18
+0 0 0 1 1 0 0 0       0x18
+0 0 0 1 1 0 0 0       0x18
+0 0 0 1 1 0 0 0       0x18
+0 0 1 0 0 1 0 0       0x24
+0 0 1 0 0 1 0 0       0x24
+0 0 1 0 0 1 0 0       0x24
+0 0 1 0 0 1 0 0       0x24
+0 1 1 1 1 1 1 0       0x7e
+0 1 0 0 0 0 1 0       0x42
+0 1 0 0 0 0 1 0       0x42
+0 1 0 0 0 0 1 0       0x42
+1 1 1 0 0 1 1 1       0xe7
+0 0 0 0 0 0 0 0       0x00
+0 0 0 0 0 0 0 0       0x00
+
+*/
+
+
+
+static char font_A[16] = {
+		0x00, 0x18, 0x18, 0x18, 0x18, 0x24, 0x24, 0x24,
+		0x24, 0x7e, 0x42, 0x42, 0x42, 0xe7, 0x00, 0x00
+	};
+
 
 
 int main(void) {
     struct BOOTINFO *binfo = (struct BOOTINFO *)0x0ff0;
     init_palette();
+    init_screen(binfo);
+   
+    putfont8(binfo->vram, binfo->scrnx, 100, 100, COL8_FFFFFF, font_A);
  
-    
+    for(;;){
+        io_hlt();
+    }
+}
+
+
+void init_palette(void){
+    set_palette(0,15,table_rgb);
+    return;
+}
+
+void init_screen(struct BOOTINFO *binfo){
     boxfill8(binfo->vram, binfo->scrnx, COL8_008484,               0,               0, binfo->scrnx- 1, binfo->scrny-29);
     boxfill8(binfo->vram, binfo->scrnx, COL8_C6C6C6,               0, binfo->scrny-28, binfo->scrnx- 1, binfo->scrny-28);
     boxfill8(binfo->vram, binfo->scrnx, COL8_FFFFFF,               0, binfo->scrny-27, binfo->scrnx- 1, binfo->scrny-27);
@@ -82,18 +128,6 @@ int main(void) {
     boxfill8(binfo->vram, binfo->scrnx, COL8_848484, binfo->scrnx-47, binfo->scrny-23, binfo->scrnx-47, binfo->scrny- 4);
     boxfill8(binfo->vram, binfo->scrnx, COL8_FFFFFF, binfo->scrnx-47, binfo->scrny- 3, binfo->scrnx- 4, binfo->scrny- 3);
     boxfill8(binfo->vram, binfo->scrnx, COL8_FFFFFF, binfo->scrnx- 3, binfo->scrny-24, binfo->scrnx- 3, binfo->scrny- 3);
-
-
-
-    for(;;){
-        io_hlt();
-    }
-}
-
-
-void init_palette(void){
-    set_palette(0,15,table_rgb);
-    return;
 }
 
 void set_palette(int start, int end, unsigned char *rgb){
@@ -128,4 +162,23 @@ void boxfill8(char *        vram,
         }
     }
 
+}
+
+void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
+{
+    char *p, d /* data */;
+    for (int i = 0; i < 16; i++) {
+        p = vram + (y + i) * xsize + x;
+        d = font[i];
+        if ((d & 0x80) != 0) { p[0] = c; }// d AND 1000 0000
+        if ((d & 0x40) != 0) { p[1] = c; }// d AND 0100 0000
+        if ((d & 0x20) != 0) { p[2] = c; }// d AND 0010 0000
+        if ((d & 0x10) != 0) { p[3] = c; }// d AND 0001 0000
+        if ((d & 0x08) != 0) { p[4] = c; }// d AND 0000 1000
+        if ((d & 0x04) != 0) { p[5] = c; }// d AND 0000 0100
+        if ((d & 0x02) != 0) { p[6] = c; }// d AND 0000 0010
+        if ((d & 0x01) != 0) { p[7] = c; }// d AND 0000 0001
+    }
+
+    return;
 }
