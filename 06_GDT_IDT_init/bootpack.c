@@ -40,7 +40,7 @@ void init_palette(void);
 void init_screen(struct BOOTINFO *binfo);
 void set_palette(int start, int end, unsigned char *rgb);
 void boxfill8(char *vram, int xsize, unsigned char color, int x0, int y0, int x1, int y1);
-void putfont8(char *vram, int xsize, int x, int y, char c, char *font, int idx);
+void putfont8(char *vram, int xsize, int x, int y, char color, char *font, char c);
 
 
 
@@ -104,11 +104,19 @@ int main(void) {
    
     //putfont8(binfo->vram, binfo->scrnx, 100, 100, COL8_FFFFFF, font_A);
 
-    putfont8(binfo->vram, binfo->scrnx,  8, 8, COL8_FFFFFF, hhwu, 'W' * 16); //a character is represetned by 16 bytes
-    putfont8(binfo->vram, binfo->scrnx, 16, 8, COL8_FFFFFF, hhwu, 'u' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 24, 8, COL8_FFFFFF, hhwu, ' ' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 40, 8, COL8_FFFFFF, hhwu, 'O' * 16);
-    putfont8(binfo->vram, binfo->scrnx, 48, 8, COL8_FFFFFF, hhwu, 'S' * 16);
+    putfont8(binfo->vram, binfo->scrnx,   8, 8, COL8_FFFFFF, hhwu, 'h'); //a character is represetned by 16 bytes
+    putfont8(binfo->vram, binfo->scrnx,  16, 8, COL8_FFFFFF, hhwu, 'h'); 
+    putfont8(binfo->vram, binfo->scrnx,  24, 8, COL8_FFFFFF, hhwu, 'w'); 
+    putfont8(binfo->vram, binfo->scrnx,  32, 8, COL8_FFFFFF, hhwu, 'u'); 
+    putfont8(binfo->vram, binfo->scrnx,  48, 8, COL8_FFFFFF, hhwu, 'l'); 
+    putfont8(binfo->vram, binfo->scrnx,  56, 8, COL8_FFFFFF, hhwu, 'o');
+    putfont8(binfo->vram, binfo->scrnx,  64, 8, COL8_FFFFFF, hhwu, 'v');
+    putfont8(binfo->vram, binfo->scrnx,  72, 8, COL8_FFFFFF, hhwu, 'e');
+    putfont8(binfo->vram, binfo->scrnx,  80, 8, COL8_FFFFFF, hhwu, 's');
+    putfont8(binfo->vram, binfo->scrnx,  96, 8, COL8_FFFFFF, hhwu, 'A');
+    putfont8(binfo->vram, binfo->scrnx, 104, 8, COL8_FFFFFF, hhwu, 'n');
+    putfont8(binfo->vram, binfo->scrnx, 112, 8, COL8_FFFFFF, hhwu, 'n');
+    putfont8(binfo->vram, binfo->scrnx, 120, 8, COL8_FFFFFF, hhwu, 'a');
 
     //int d1 = 'A'*16;
     //putfont8(binfo->vram, binfo->scrnx, 40, 48, COL8_FFFFFF, hhwu + d1);
@@ -177,20 +185,21 @@ void boxfill8(char *        vram,
 
 }
 
-void putfont8(char *vram, int xsize, int x, int y, char c, char *font, int idx)
+void putfont8(char *vram, int xsize, int x, int y, char color, char *font, char c)
 {
+    int idx = c*16; 
     char *p, d /* data */;
     for (int i = 0; i < 16; i++) {
         p = vram + (y + i) * xsize + x;
         d = font[idx+i];
-        if ((d & 0x80) != 0) { p[0] = c; }// d AND 1000 0000
-        if ((d & 0x40) != 0) { p[1] = c; }// d AND 0100 0000
-        if ((d & 0x20) != 0) { p[2] = c; }// d AND 0010 0000
-        if ((d & 0x10) != 0) { p[3] = c; }// d AND 0001 0000
-        if ((d & 0x08) != 0) { p[4] = c; }// d AND 0000 1000
-        if ((d & 0x04) != 0) { p[5] = c; }// d AND 0000 0100
-        if ((d & 0x02) != 0) { p[6] = c; }// d AND 0000 0010
-        if ((d & 0x01) != 0) { p[7] = c; }// d AND 0000 0001
+        if ((d & 0x80) != 0) { p[0] = color; }// d AND 1000 0000
+        if ((d & 0x40) != 0) { p[1] = color; }// d AND 0100 0000
+        if ((d & 0x20) != 0) { p[2] = color; }// d AND 0010 0000
+        if ((d & 0x10) != 0) { p[3] = color; }// d AND 0001 0000
+        if ((d & 0x08) != 0) { p[4] = color; }// d AND 0000 1000
+        if ((d & 0x04) != 0) { p[5] = color; }// d AND 0000 0100
+        if ((d & 0x02) != 0) { p[6] = color; }// d AND 0000 0010
+        if ((d & 0x01) != 0) { p[7] = color; }// d AND 0000 0001
     }
 
     return;
