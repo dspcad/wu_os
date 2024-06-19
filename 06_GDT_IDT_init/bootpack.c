@@ -40,6 +40,7 @@ void init_palette(void);
 void init_screen(struct BOOTINFO *binfo);
 void set_palette(int start, int end, unsigned char *rgb);
 void boxfill8(char *vram, int xsize, unsigned char color, int x0, int y0, int x1, int y1);
+void putfont8(char *vram, int xsize, int x, int y, char c, char *font, int idx);
 
 
 
@@ -82,6 +83,8 @@ static unsigned char table_rgb[16*3]={
 0 0 0 0 0 0 0 0       0x00
 0 0 0 0 0 0 0 0       0x00
 
+               16x8
+               a row is represented by a byte
 */
 
 
@@ -95,10 +98,20 @@ static char font_A[16] = {
 
 int main(void) {
     struct BOOTINFO *binfo = (struct BOOTINFO *)0x0ff0;
+    extern char hhwu[4096];
     init_palette();
     init_screen(binfo);
    
-    putfont8(binfo->vram, binfo->scrnx, 100, 100, COL8_FFFFFF, font_A);
+    //putfont8(binfo->vram, binfo->scrnx, 100, 100, COL8_FFFFFF, font_A);
+
+    putfont8(binfo->vram, binfo->scrnx,  8, 8, COL8_FFFFFF, hhwu, 'W' * 16); //a character is represetned by 16 bytes
+    putfont8(binfo->vram, binfo->scrnx, 16, 8, COL8_FFFFFF, hhwu, 'u' * 16);
+    putfont8(binfo->vram, binfo->scrnx, 24, 8, COL8_FFFFFF, hhwu, ' ' * 16);
+    putfont8(binfo->vram, binfo->scrnx, 40, 8, COL8_FFFFFF, hhwu, 'O' * 16);
+    putfont8(binfo->vram, binfo->scrnx, 48, 8, COL8_FFFFFF, hhwu, 'S' * 16);
+
+    //int d1 = 'A'*16;
+    //putfont8(binfo->vram, binfo->scrnx, 40, 48, COL8_FFFFFF, hhwu + d1);
  
     for(;;){
         io_hlt();
@@ -164,12 +177,12 @@ void boxfill8(char *        vram,
 
 }
 
-void putfont8(char *vram, int xsize, int x, int y, char c, char *font)
+void putfont8(char *vram, int xsize, int x, int y, char c, char *font, int idx)
 {
     char *p, d /* data */;
     for (int i = 0; i < 16; i++) {
         p = vram + (y + i) * xsize + x;
-        d = font[i];
+        d = font[idx+i];
         if ((d & 0x80) != 0) { p[0] = c; }// d AND 1000 0000
         if ((d & 0x40) != 0) { p[1] = c; }// d AND 0100 0000
         if ((d & 0x20) != 0) { p[2] = c; }// d AND 0010 0000
