@@ -12,11 +12,9 @@ SCRNX   EQU   0x0ff4      ; 分辨率X
 SCRNY   EQU   0x0ff6      ; 分辨率Y
 VRAM    EQU   0x0ff8      ; 图像缓冲区的起始位置
 
-  ; 使用linker script指定起始地址
-  ; ORG   0xc200            ; 程序被加载的内存地址
-
-  [SECTION .btext]
-  [BITS 16]
+  ORG   0xc200            ; 程序被加载的内存地址
+  [BITS 16]               ; It tells the assembler to use the 16-bit instruction set. 
+                          ;This means that the default operand size and address size will be 16 bits.
 entry:
 ; 设置屏幕模式
   MOV   AL, 0x13          ; VGA显卡，320x200x8 bit
