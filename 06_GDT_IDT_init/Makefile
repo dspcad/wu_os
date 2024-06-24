@@ -29,7 +29,7 @@ func.bin:
 	$(AS) -f elf func.asm -o func.bin -l func.list
 
 kernel.sys: bootpack.bin func.bin hankaku.bin
-	$(LD) -m elf_i386 --oformat binary bootpack.bin func.bin hankaku.bin -o $@ -T os_dev.ld
+	$(LD) -m elf_i386 --oformat binary bootpack.bin func.bin hankaku.bin -o $@ -T kernel.ld
 
 os_dev.sys: asmhead.bin kernel.sys
 	cat asmhead.bin > os_dev.sys
