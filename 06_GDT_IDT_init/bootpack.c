@@ -41,6 +41,7 @@ void init_screen(struct BOOTINFO *binfo);
 void set_palette(int start, int end, unsigned char *rgb);
 void boxfill8(char *vram, int xsize, unsigned char color, int x0, int y0, int x1, int y1);
 void putfont8(char *vram, int xsize, int x, int y, char color, char *font, char c);
+void putfont8_asc(char *vram, int xsize, int x, int y, char color, unsigned char *s);
 
 
 
@@ -121,6 +122,8 @@ int main(void) {
     //int d1 = 'A'*16;
     //putfont8(binfo->vram, binfo->scrnx, 40, 48, COL8_FFFFFF, hhwu + d1);
  
+    putfont8_asc(binfo->vram, binfo->scrnx, 30,130,COL8_FFFFFF, "AI Framework!");
+
     for(;;){
         io_hlt();
     }
@@ -203,4 +206,14 @@ void putfont8(char *vram, int xsize, int x, int y, char color, char *font, char 
     }
 
     return;
+}
+
+void putfont8_asc(char *vram, int xsize, int x, int y, char color, unsigned char *s)
+{
+    extern char hhwu[4096];
+    for(; *s!=0x00;s++){
+        putfont8(vram, xsize,  x, y, color , hhwu, *s);
+        x+=8;
+    }
+    return ;
 }
