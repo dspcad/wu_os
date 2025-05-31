@@ -7,4 +7,6 @@
 - It would load the other program in other memory address like 0x8200.
 
 ![](ipl.jpg "IPL")
+# The layout of floppy
+![](floppy.jpg "Floppy")
 
