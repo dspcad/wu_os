@@ -9,4 +9,18 @@
 ![](ipl.jpg "IPL")
 # The layout of floppy
 ![](floppy.jpg "Floppy")
+### Reading Order for BIOS Disk Access
 
+When performing disk reads via BIOS interrupt `0x13`, the read operation follows a specific order in addressing:
+
+- **CL (Cylinder Low / Sector Number):** Specifies the sector number (1-based index).
+- **DH (Head):** Specifies the head (or side) number of the disk.
+- **CH (Cylinder High / Cylinder Number):** Specifies the cylinder (or track) number.
+
+The BIOS processes sectors in the following hierarchical order:
+
+**Sector (`CL`) → Head (`DH`) → Cylinder (`CH`)**
+
+This means the BIOS:
+- Iterates through all sectors of a head before moving to the next head.
+- Processes all heads of a cylinder before proceeding to the next cylinder.
